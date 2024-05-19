@@ -1,3 +1,6 @@
+from core.models.assignments import AssignmentStateEnum, GradeEnum
+
+
 def test_get_assignments_teacher_1(client, h_teacher_1):
     response = client.get(
         '/teacher/assignments',
@@ -24,6 +27,17 @@ def test_get_assignments_teacher_2(client, h_teacher_2):
         assert assignment['teacher_id'] == 2
         assert assignment['state'] in ['SUBMITTED', 'GRADED']
 
+def test_get_assignments_bad_teacher(client, h_bad_teacher):
+    response = client.get(
+        '/teacher/assignments',
+        headers=h_bad_teacher
+    )
+
+    assert response.status_code == 404
+    data = response.json
+
+    assert data['error'] == 'FyleError'
+    assert data['message'] == 'teacher not found'
 
 def test_grade_assignment_cross(client, h_teacher_2):
     """
@@ -99,3 +113,44 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+def test_grade_assignment(client, h_teacher_2):
+    response = client.post(
+        '/teacher/assignments/grade',
+         json={
+            "id": 3,
+            "grade": GradeEnum.C.value
+        },
+        headers=h_teacher_2
+    )
+
+    assert response.status_code == 200
+    
+    assert response.json['data']['state'] == AssignmentStateEnum.GRADED.value
+    assert response.json['data']['grade'] == GradeEnum.C
+
+def test_regrade_assignment(client, h_principal):
+    response = client.post(
+        '/principal/assignments/grade',
+        json={
+            'id': 3,
+            'grade': GradeEnum.B.value
+        },
+        headers=h_principal
+    )
+
+    assert response.status_code == 200
+
+    assert response.json['data']['state'] == AssignmentStateEnum.GRADED.value
+    assert response.json['data']['grade'] == GradeEnum.B
+
+
+def test_bad_header(client, h_bad):
+    response = client.get(
+        '/teacher/assignments',
+        headers=h_bad
+    )
+
+    assert response.status_code == 403
+    assert response.json['error'] == 'FyleError'
+    assert response.json['message'] == 'requester should be a teacher'

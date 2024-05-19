@@ -66,3 +66,46 @@ def h_principal():
     }
 
     return headers
+
+@pytest.fixture
+def h_bad_student():
+    headers = {
+        'X-Principal': json.dumps({
+            'student_id': 100,
+            'user_id': 1
+        })
+    }
+
+    return headers
+
+@pytest.fixture
+def h_bad_teacher():
+    headers = {
+        'X-Principal': json.dumps({
+            'teacher_id': 100,
+            'user_id': 3
+        })
+    }
+
+    return headers
+
+@pytest.fixture
+def h_bad_principal():
+    headers = {
+        'X-Principal': json.dumps({
+            'principal_id': 100,
+            'user_id': 5
+        })
+    }
+
+    return headers
+
+@pytest.fixture
+def h_bad():
+    headers = {
+        'X-Principal': json.dumps({
+            'user_id': 100
+        })
+    }
+
+    return headers
