@@ -26,7 +26,7 @@ You will hear back within 48 hours from us via email.
 ## Installation
 
 1. Fork this repository to your github account
-2. Clone the forked repository and proceed with steps mentioned below
+2. Clone the forked repository and proceed with steps mentioned below OR follow the steps [HERE](./DOCKER_README.md) to run the project using docker
 
 ### Install requirements
 
